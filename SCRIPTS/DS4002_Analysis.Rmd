@@ -1,0 +1,136 @@
+`---
+title: "Test_Schrute"
+output: html_document
+date: "2024-01-30"
+---
+
+# How well each office character is an indicator of the episodes rating
+```{r setup, echo=FALSE}
+set.seed(0)
+knitr::opts_chunk$set(echo = TRUE, warning=FALSE)
+library(schrute)
+library(dplyr)
+library(Metrics)
+library(ggplot2)
+
+
+prepare_data <- function(df, name) {
+  # We used the dplyr filter() function to only choose observations for season
+  # 1,2,3,4,5,6 (these are the only seasons that Michael was in). We also subset
+  # the observations to only include rows where Michael is the character with a 
+  # line. This set us up to be able to count the number of lines he had per
+  # epsiode. 
+  filtered_df <- df %>% filter(character == name, season == c(1, 2, 3, 4, 5, 6))
+
+  # We created a new dataframe and used the old dataframe to fill it in. We piped
+  # the old dataframe with a group_by() function that grouped by the name of each
+  # episode. We then used the summarize() function to add the lines of each 
+  # episode, as well as the imdb rating. 
+  aggregated_df <- filtered_df %>%
+    group_by(episode_name) %>%
+    summarise(
+      lines_per_episode = n(),
+      imdb_rating = mean(imdb_rating)
+    )
+  
+  
+  # This is our EDA, we created a scatterplot of the lines per episode and the 
+  # imdb rating. This scatterplot helped us to form our analysis.   
+  scatter = ggplot(aggregated_df, aes(x = lines_per_episode, y = imdb_rating)) +
+    geom_point() +  # Add points for the scatterplot
+    labs(
+        x = paste("Mentions of ", name),
+        y = "IMDb Rating", 
+         title = "Scatterplot of IMDb Rating vs. Lines per Episode") +
+    theme_minimal() +  # Use a minimal theme for aesthetics
+    theme(panel.border = element_rect(colour = "black", fill=NA, size=2)) # Adds a border around the plot
+    plot(scatter)
+    
+    return(aggregated_df)  
+}
+
+
+ 
+```
+
+```{r}
+overall_p <- function(my_model) {
+    f <- summary(my_model)$fstatistic
+    p <- pf(f[1],f[2],f[3],lower.tail=F)
+    attributes(p) <- NULL
+    return(p)
+}
+run_analysis <- function(df) {
+  # To perform our analysis, we continued using the dataframe that we 
+  # created above in our preliminary analysis. We split the data into train 
+  # and test data. We used a 80/20 split to allow for a larger training set and then a smaller test set
+  sample.data<-sample.int(nrow(df), floor(.80*nrow(df)), replace = F)
+  train<-df[sample.data, ]
+  test<-df[-sample.data, ]
+  
+  # After creating our training and testing data, we ran a linear regression
+  # analysis on both train and test. This allowed us to look at p-values,
+  # as well as calculate the RMSE.
+  result_train<-lm(imdb_rating~lines_per_episode, data=train)
+  
+  train_pred <- predict(result_train, new_data = train)
+  test_pred <- predict(result_train, new_data = test)
+  
+  rmse_test = rmse(test_pred, test$imdb_rating)
+  rmse_train = rmse(train_pred, train$imdb_rating)
+  
+  # We plotted the data along with the trendline calculated by the linear regression
+  print(ggplot(train, aes(lines_per_episode, imdb_rating)) +
+    geom_point() +
+    geom_abline(intercept = coef(result_train)[1], slope = coef(result_train)[2], color = "blue") +
+    labs(title = paste("Train data Scatter Plot with Linear Regression Line for ", name),
+         x = "X-axis",
+         y = "Y-axis"))
+  
+  print(ggplot(test, aes(lines_per_episode, imdb_rating)) +
+    geom_point() +
+    geom_abline(intercept = coef(result_train)[1], slope = coef(result_train)[2], color = "blue") +
+    labs(title = paste("Test data Scatter Plot with Linear Regression Line for ", name),
+         x = "X-axis",
+         y = "Y-axis"))
+  
+  print(summary(result_train))
+  
+  # We returned information relevant to evaluating each character
+  return(list(test_rmse = rmse_test,
+              model_p_value = overall_p(result_train),
+              correlation_coefficient = cor(df$imdb_rating, df$lines_per_episode)
+              ))
+}
+
+```
+
+```{r}
+office_names <- c("Michael", "Dwight", "Jim", "Pam")
+
+# For loop to iterate through the first names
+results_list <- list()
+for (name in office_names) {
+  print(name)
+  character_df = prepare_data(schrute::theoffice, name)
+  analysis_result = run_analysis(character_df)
+  
+  # Add character name to the result list
+  analysis_result$name <- name
+  
+  # Append the result to the list
+  results_list <- c(results_list, list(analysis_result))
+}
+
+# Combine results into a data frame
+results_df <- bind_rows(results_list)
+
+# Sort the data frame by each metric
+results_df_sorted <- arrange(results_df,
+                              desc(test_rmse),
+                              model_p_value,
+                              desc(correlation_coefficient))
+
+# Print the sorted results data frame
+print(results_df)
+```
