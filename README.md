@@ -22,8 +22,7 @@ Project Structure
 ```
 Project
 ├── DATA
-│   ├── appendix.md
-│   └── theoffice.rda
+│   ├── weather.csv 
 ├── LICENSE
 ├── OUTPUT
 │   └── placeholder
