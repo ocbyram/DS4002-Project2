@@ -22,6 +22,15 @@ Project 1 Analysis for DS 4002
 ## Section 2: Documentation Map
 Project Structure
 ```
+Project
+├── DATA
+│   ├── weather.csv 
+├── LICENSE
+├── OUTPUT
+│   └── placeholder
+├── README.md
+└── SCRIPTS
+    └── DS4002_Analysis.Rmd
 ```
 
 ## Section 3: Reproducing
