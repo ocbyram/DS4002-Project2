@@ -44,14 +44,17 @@ Project
 
 ## Section 3: Reproducing
 
-***In this section, you should give explicit step-by-step instructions to reproduce the Results of your study. These instructions should be written in straightforward plain English, but they must be concise, but detailed and precise enough, to make it possible for an interested user to reproduce your results without much difficulty. N.B. This section will be crucial for the CS1 assignment, where you'll be required to reproduce the results of other groups. Therefore, make sure to explain this section thoroughly.*** 
 
 
 Before starting ensure that you have all the required software installed as outlined in Section 1. We also encourage use of either Mac, Windows or Ubuntu, as that is what the analysis was tested on, although other operating systems may work.
 
 ### R scripts
 
+***To reproduce the analysis performed in R, one must first used the read.csv() function to import the weather csv data. Subset the columns that are mentioned in the data appendix, then create a new column labeled "year" with the year of the date subset into it. After this use the ANOVA function to perform a simple ANOVA test on the max temp, min temp, precipitation, and snow. Following this, create boxplots on the two that have significant p-values (precipitation and max temp). Finally, create a linear regression model using the lm function in R. This should regress max temp on date, which allows you to predict the max temperature of future dates based on past ones.*** 
+
 ### Python scripts
+To reproduce results in python:
+
 1. In the SCRIPTS directory, run `pip install -r requirements.txt` to install the required packages
 2. Open analysis.ipynb in VS Code
 3. Pres the run all button at the top of the notebook to run the analysis 
