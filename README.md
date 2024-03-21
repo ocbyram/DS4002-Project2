@@ -24,10 +24,10 @@ Project Structure
 ```
 Project
 ├── DATA
-│   ├── weather.csv 
+│   ├── weather.csv
 ├── LICENSE
 ├── OUTPUT
-│   └── placeholder
+│   └── Hraph Files
 ├── README.md
 └── SCRIPTS
     └── DS4002_Analysis.Rmd
