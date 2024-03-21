@@ -1,0 +1,60 @@
+---
+title: "DS4002-Project2"
+author: "Olivia Byram"
+date: "2024-03-21"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## This script is where we perform ANOVA and then create a model that predicts
+## weather
+
+```{r}
+#In this section of the script I am reading in the data then subsetting it.
+weather_df <- read.csv("weather.csv")
+weather <- weather_df[c(-10, -11, -12, -13, -14, -15, -16)]
+
+#I am creating a new column with just the year of each observation
+weather$DATE<- as.Date(weather$DATE)
+weather <- transform(weather, YEAR = format(DATE, "%Y"))
+```
+
+```{r}
+# In this section of the script I will be performing an ANOVA test between the
+# years of data. I performed 4 - one for max temp, one for min temp, one
+# for precipitation, and one for snow
+
+max_temp <- aov(TMAX ~ YEAR, data = weather)
+summary(max_temp)
+
+min_temp <- aov(TMIN ~ YEAR, data = weather)
+summary(min_temp)
+
+precip <- aov(PRCP ~ YEAR, data = weather)
+summary(precip)
+
+snow <- aov(SNOW ~ YEAR, data = weather)
+summary(snow)
+```
+
+```{r, warning=FALSE}
+#I am creating graphical representations of where we saw evidence of variance
+#with our ANOVA test. We saw evidence of variance within max temperature
+#and precipitation.
+
+library(ggplot2)
+ggplot(weather, aes(x=YEAR, y=TMAX)) + geom_boxplot()
+ggplot(weather, aes(x=YEAR, y=PRCP)) + geom_boxplot()
+```
+
+```{r}
+#I am creating a model to predicting future weather trends for max temperature
+#and for precipitation.
+
+lmTMAX = lm(TMAX~DATE, data = weather)
+summary(lmTMAX)
+```
+
