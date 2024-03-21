@@ -1,0 +1,33 @@
+Significant Correlation between Year and Average Temperature (TOBS) in each month:
+MONTH
+2     0.143273
+8     0.286093
+9     0.129998
+11    0.181551
+dtype: float64
+
+Significant Correlation between Year and Standard Deviation of Temperature (TOBS) in each month:
+MONTH
+2     0.143273
+8     0.286093
+9     0.129998
+11    0.181551
+dtype: float64
+
+Significant Correlation between Year and Highest High Temperature (TMAX) in each month:
+MONTH
+8     0.195129
+11    0.162566
+dtype: float64
+
+Significant Correlation between Year and Lowest Low Temperature (TMIN) in each month:
+MONTH
+8     0.201227
+11    0.157302
+12   -0.149767
+dtype: float64
+
+Significant Correlation between Year and Largest Change in Temperature in two days in each month:
+MONTH
+12    0.140265
+dtype: float64
